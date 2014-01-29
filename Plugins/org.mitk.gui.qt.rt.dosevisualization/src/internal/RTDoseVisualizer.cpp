@@ -15,11 +15,19 @@ See LICENSE.txt or http://www.mitk.org for details.
 ===================================================================*/
 
 
+// Qt
+#include <QMessageBox>
+#include <QMenu>
+
 // Blueberry
 #include <berryISelectionService.h>
 #include <berryIWorkbenchWindow.h>
+
 // MITK
 #include <mitkNodePredicateProperty.h>
+
+#include <service/event/ctkEventAdmin.h>
+#include <service/event/ctkEventConstants.h>
 
 // Qmitk
 #include "RTDoseVisualizer.h"
@@ -28,6 +36,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <DataStructures/mitkIsoDoseLevelSetProperty.h>
 #include <DataStructures/mitkIsoDoseLevelVectorProperty.h>
 #include <mitkIsoLevelsGenerator.h>
+#include <mitkRTUIConstants.h>
 
 #include <QmitkDoseColorDelegate.h>
 #include <QmitkDoseValueDelegate.h>
@@ -35,20 +44,18 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <QmitkIsoDoseLevelSetModel.h>
 #include <QmitkFreeIsoDoseLevelWidget.h>
 
-// Qt
-#include <QMessageBox>
-#include <QMenu>
+#include "org_mitk_gui_qt_rt_dosevisualization_Activator.h"
 
 const std::string RTDoseVisualizer::VIEW_ID = "org.mitk.views.rt.dosevisualization";
 
 RTDoseVisualizer::RTDoseVisualizer()
 {
-    m_freeIsoValues = mitk::IsoDoseLevelVector::New();
-    m_selectedNodeIsoSet = mitk::IsoDoseLevelSet::New();
-    m_selectedNode = NULL;
-    m_selectedPresetName = "";
-    m_internalUpdate = false;
-    m_PrescribedDose_Data = 0.0;
+  m_freeIsoValues = mitk::IsoDoseLevelVector::New();
+  m_selectedNodeIsoSet = mitk::IsoDoseLevelSet::New();
+  m_selectedNode = NULL;
+  m_selectedPresetName = "";
+  m_internalUpdate = false;
+  m_PrescribedDose_Data = 0.0;
 }
 
 RTDoseVisualizer::~RTDoseVisualizer()
@@ -98,6 +105,20 @@ void RTDoseVisualizer::CreateQtPartControl( QWidget *parent )
   connect(m_Controls.isoLevelSetView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(OnShowContextMenuIsoSet(const QPoint&)));
   connect(m_Controls.comboPresets, SIGNAL(currentIndexChanged ( const QString&)), this, SLOT(OnCurrentPresetChanged(const QString&)));
   connect(m_Controls.btnUsePrescribedDose, SIGNAL(clicked()), this, SLOT(OnUsePrescribedDoseClicked()));
+
+  ctkServiceReference ref = mitk::org_mitk_gui_qt_rt_dosevisualization_Activator::GetContext()->getServiceReference<ctkEventAdmin>();
+
+  ctkDictionary propsForSlot;
+  if (ref)
+  {
+    ctkEventAdmin* eventAdmin = mitk::org_mitk_gui_qt_rt_dosevisualization_Activator::GetContext()->getService<ctkEventAdmin>(ref);
+
+    propsForSlot[ctkEventConstants::EVENT_TOPIC] = mitk::rt::CTKEventConstants::TOPIC_ISO_DOSE_LEVEL_PRESETS_CHANGED.c_str();
+    eventAdmin->subscribeSlot(this, SLOT(OnHandleCTKEventPresetsChanged(ctkEvent)), propsForSlot);
+
+    propsForSlot[ctkEventConstants::EVENT_TOPIC] = mitk::rt::CTKEventConstants::TOPIC_REFERENCE_DOSE_CHANGED.c_str();
+    eventAdmin->subscribeSlot(this, SLOT(OnHandleCTKEventReferenceDoseChanged(ctkEvent)), propsForSlot);
+  }
 
   this->UpdateBySelectedNode();
 }
@@ -280,7 +301,7 @@ void RTDoseVisualizer::OnSelectionChanged( berry::IWorkbenchPart::Pointer /*sour
   const QList<mitk::DataNode::Pointer>& nodes )
 {
   QList<mitk::DataNode::Pointer> dataNodes = this->GetDataManagerSelection();
-  
+
   mitk::DataNode* selectedNode = NULL;
 
   if (!dataNodes.empty())
@@ -298,7 +319,7 @@ void RTDoseVisualizer::OnSelectionChanged( berry::IWorkbenchPart::Pointer /*sour
   {
     m_selectedNode = selectedNode;
   }
-  
+
   UpdateBySelectedNode();
 }
 
@@ -364,7 +385,7 @@ void RTDoseVisualizer::UpdateBySelectedNode()
     m_Controls.spinReferenceDose->setValue(referenceDose);
 
     mitk::IsoDoseLevelSetProperty::Pointer propIsoSet = 
-    dynamic_cast<mitk::IsoDoseLevelSetProperty* >(m_selectedNode->GetProperty(mitk::rt::Constants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str()));
+      dynamic_cast<mitk::IsoDoseLevelSetProperty* >(m_selectedNode->GetProperty(mitk::rt::Constants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str()));
 
     if (propIsoSet)
     {
@@ -384,7 +405,7 @@ void RTDoseVisualizer::UpdateByPreferences()
   int index = 0;
   int selectedIndex = -1;
   for (mitk::rt::PresetMapType::const_iterator pos = m_Presets.begin(); pos != m_Presets.end(); ++pos, ++index)
-	{
+  {
     m_Controls.comboPresets->addItem(QString(pos->first.c_str()));
     if (this->m_selectedPresetName == pos->first)
     {
@@ -434,13 +455,13 @@ void RTDoseVisualizer::OnCurrentPresetChanged(const QString& presetName)
 void RTDoseVisualizer::ActualizeIsoLevelsForAllDoseDataNodes()
 {
   std::string presetName = mitk::rt::GetSelectedPresetName();
-  
+
   mitk::rt::PresetMapType presetMap = mitk::rt::LoadPresetsMap();
 
   mitk::NodePredicateProperty::Pointer isDoseNode = mitk::NodePredicateProperty::New(mitk::rt::Constants::DOSE_PROPERTY_NAME.c_str(), mitk::BoolProperty::New(true));
 
   mitk::DataStorage::SetOfObjects::ConstPointer nodes = this->GetDataStorage()->GetSubset(isDoseNode);
-  
+
   mitk::IsoDoseLevelSet* selectedPreset = presetMap[presetName];
 
   if (!selectedPreset)
@@ -461,13 +482,13 @@ void RTDoseVisualizer::ActualizeReferenceDoseForAllDoseDataNodes()
   /** @TODO Klären ob diese präsentations info genauso wie*/
   mitk::DoseValueAbs value = 0;
   bool sync = mitk::rt::GetReferenceDoseValue(value);
-  
+
   if (sync)
   {
     mitk::NodePredicateProperty::Pointer isDoseNode = mitk::NodePredicateProperty::New(mitk::rt::Constants::DOSE_PROPERTY_NAME.c_str(), mitk::BoolProperty::New(true));
 
     mitk::DataStorage::SetOfObjects::ConstPointer nodes = this->GetDataStorage()->GetSubset(isDoseNode);
-  
+
     for(mitk::DataStorage::SetOfObjects::const_iterator pos = nodes->begin(); pos != nodes->end(); ++pos)
     {
       (*pos)->SetFloatProperty(mitk::rt::Constants::REFERENCE_DOSE_PROPERTY_NAME.c_str(), value);
@@ -478,4 +499,19 @@ void RTDoseVisualizer::ActualizeReferenceDoseForAllDoseDataNodes()
 void RTDoseVisualizer::ActualizeDisplayStyleForAllDoseDataNodes()
 {
   /** @TODO Klären ob diese präsentations info global oder auch per node gespeichert wird*/
+}
+
+void RTDoseVisualizer::OnHandleCTKEventReferenceDoseChanged(const ctkEvent& event)
+{
+  mitk::DoseValueAbs referenceDose = 0.0;
+  bool globalSync = mitk::rt::GetReferenceDoseValue(referenceDose);
+
+  this->m_Controls.spinReferenceDose->setValue(referenceDose);
+}
+
+void RTDoseVisualizer::OnHandleCTKEventPresetsChanged(const ctkEvent& event)
+{
+  std::string currentPresetName  = mitk::rt::GetSelectedPresetName();
+
+  this->OnCurrentPresetChanged(QString::fromStdString(currentPresetName));
 }

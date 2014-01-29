@@ -27,9 +27,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "mitkIsoDoseLevel.h"
 
 /**
- * \class QmitkFreeIsoDoseLevelWidget
- * \brief Widget that allows to show and edit the content of an mitk::IsoDoseLevel instance.
- */
+* \class QmitkFreeIsoDoseLevelWidget
+* \brief Widget that allows to show and edit the content of an mitk::IsoDoseLevel instance.
+*/
 class RTUI_EXPORT QmitkFreeIsoDoseLevelWidget : public QWidget, private Ui::QmitkFreeIsoDoseLevelWidget
 {
   Q_OBJECT
@@ -45,28 +45,28 @@ signals:
   void ColorChanged(mitk::IsoDoseLevel*);
   void VisualizationStyleChanged(mitk::IsoDoseLevel*);
 
-public Q_SLOTS:
-  /**
+  public Q_SLOTS:
+    /**
     * \brief Slot that can be used to set the reference dose.
     */
-  void setReferenceDose(double newReferenceDose);
+    void setReferenceDose(double newReferenceDose);
 
-  /**
+    /**
     * \brief Slot that can be used to set the dose level instance that should be handled by the widget.
     */
-  void setIsoDoseLevel(mitk::IsoDoseLevel* level);
+    void setIsoDoseLevel(mitk::IsoDoseLevel* level);
 
-  void OnRelValueChanged(double newValue);
-  void OnAbsValueChanged(double newValue);
-  void OnSliderChanged(int newValue);
-  void OnVisibleClicked(bool checked);
-  void OnColorChanged(QColor color);
+    void OnRelValueChanged(double newValue);
+    void OnAbsValueChanged(double newValue);
+    void OnSliderChanged(int newValue);
+    void OnVisibleClicked(bool checked);
+    void OnColorChanged(QColor color);
 
 protected:
 
   /**
-   * \brief Updates the widget according to its current settings.
-   */
+  * \brief Updates the widget according to its current settings.
+  */
   void update();
   void updateValue(mitk::DoseValueRel newDose);
 

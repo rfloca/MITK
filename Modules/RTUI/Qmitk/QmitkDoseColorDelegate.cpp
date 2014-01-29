@@ -36,7 +36,7 @@ void QmitkDoseColorDelegate::paint(QPainter *painter, const QStyleOptionViewItem
   if (data.canConvert<QColor>())
   {
     QColor color = data.value<QColor>();
-  
+
     painter->fillRect(option.rect, color);
   }
   else
@@ -74,7 +74,7 @@ bool QmitkDoseColorDelegate::editorEvent(QEvent *event, QAbstractItemModel *mode
 
   QColor oldcolor = index.data(Qt::EditRole).value<QColor>();
   QColor newColor = QColorDialog::getColor(oldcolor, NULL);
-  
+
   if (newColor.isValid())
   {
     return model->setData(index, QVariant(newColor), Qt::EditRole);

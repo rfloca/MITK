@@ -89,6 +89,6 @@ bool QmitkDoseVisualStyleDelegate::editorEvent(QEvent *event, QAbstractItemModel
   }
 
   bool newState = !(index.data(Qt::EditRole).toBool());
-  
+
   return model->setData(index, QVariant(newState), Qt::EditRole);
 };
