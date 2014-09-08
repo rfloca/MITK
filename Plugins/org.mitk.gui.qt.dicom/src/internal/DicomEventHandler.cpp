@@ -248,6 +248,7 @@ void DicomEventHandler::OnSignalAddSeriesToDataManager(const ctkEvent& ctkEvent)
         mitk::DataStorage* dataStorage = storageService->GetDefaultDataStorage().GetPointer()->GetDataStorage();
 
         dataStorage->Add(node);
+        mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
       }
     }
   }
