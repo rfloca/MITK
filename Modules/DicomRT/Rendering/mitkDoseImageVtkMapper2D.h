@@ -300,7 +300,7 @@ namespace mitk {
     * sign (all positive or all negative) there is no intersection.
     * If the distances have different sign, there is an intersection.
     **/
-    bool RenderingGeometryIntersectsImage( const PlaneGeometry* renderingGeometry, SlicedGeometry3D* imageGeometry );
+    bool RenderingGeometryIntersectsImage( const Geometry2D* renderingGeometry, SlicedGeometry3D* imageGeometry );
   };
 
 } // namespace mitk
