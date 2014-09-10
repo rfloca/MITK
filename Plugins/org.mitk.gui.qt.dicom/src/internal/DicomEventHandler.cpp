@@ -157,21 +157,32 @@ void DicomEventHandler::OnSignalAddSeriesToDataManager(const ctkEvent& ctkEvent)
 
           //Generating the Colorwash
           vtkSmartPointer<vtkColorTransferFunction> transferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
+          mitk::TransferFunction::ControlPoints scalarOpacityPoints;
+          scalarOpacityPoints.push_back( std::make_pair(0, 1 ) );
+
+          //Backgroud
+          transferFunction->AddHSVPoint(((isoDoseLevelPreset->Begin())->GetDoseValue()*referenceDose)-0.001,0,0,0,1.0,1.0);
 
           for(mitk::IsoDoseLevelSet::ConstIterator itIsoDoseLevel = isoDoseLevelPreset->Begin(); itIsoDoseLevel != isoDoseLevelPreset->End(); ++itIsoDoseLevel)
           {
             float *hsv = new float[3];
             //used for transfer rgb to hsv
             vtkSmartPointer<vtkMath> cCalc = vtkSmartPointer<vtkMath>::New();
-            if(itIsoDoseLevel->GetVisibleColorWash()){
+            if(itIsoDoseLevel->GetVisibleColorWash())
+            {
               cCalc->RGBToHSV(itIsoDoseLevel->GetColor()[0],itIsoDoseLevel->GetColor()[1],itIsoDoseLevel->GetColor()[2],&hsv[0],&hsv[1],&hsv[2]);
               transferFunction->AddHSVPoint(itIsoDoseLevel->GetDoseValue()*referenceDose,hsv[0],hsv[1],hsv[2],1.0,1.0);
+            }
+            else
+            {
+              scalarOpacityPoints.push_back( std::make_pair(itIsoDoseLevel->GetDoseValue()*referenceDose, 1 ) );
             }
           }
 
           mitk::TransferFunction::Pointer mitkTransFunc = mitk::TransferFunction::New();
           mitk::TransferFunctionProperty::Pointer mitkTransFuncProp = mitk::TransferFunctionProperty::New();
           mitkTransFunc->SetColorTransferFunction(transferFunction);
+          mitkTransFunc->SetScalarOpacityPoints(scalarOpacityPoints);
           mitkTransFuncProp->SetValue(mitkTransFunc);
 
           mitk::RenderingModeProperty::Pointer renderingModeProp = mitk::RenderingModeProperty::New();
@@ -182,7 +193,6 @@ void DicomEventHandler::OnSignalAddSeriesToDataManager(const ctkEvent& ctkEvent)
           doseImageNode->SetProperty("opacity", mitk::FloatProperty::New(0.5));
 
           //set the outline properties
-          doseOutlineNode->SetBoolProperty("outline binary", true);
           doseOutlineNode->SetProperty( "helper object", mitk::BoolProperty::New(true) );
           doseOutlineNode->SetProperty( "includeInBoundingBox", mitk::BoolProperty::New(false) );
 
@@ -191,7 +201,7 @@ void DicomEventHandler::OnSignalAddSeriesToDataManager(const ctkEvent& ctkEvent)
           mitk::DataStorage* dataStorage = storageService->GetDefaultDataStorage().GetPointer()->GetDataStorage();
 
           dataStorage->Add(doseImageNode);
-          dataStorage->Add(doseOutlineNode);
+          dataStorage->Add(doseOutlineNode, doseImageNode);
 
           //set the dose mapper for outline drawing; the colorwash is realized by the imagevtkmapper2D
           mitk::DoseImageVtkMapper2D::Pointer contourMapper = mitk::DoseImageVtkMapper2D::New();
