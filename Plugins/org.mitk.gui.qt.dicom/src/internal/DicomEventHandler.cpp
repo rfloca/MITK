@@ -136,24 +136,24 @@ void DicomEventHandler::OnSignalAddSeriesToDataManager(const ctkEvent& ctkEvent)
 
           double referenceDose = 40.0;
           //set some specific colorwash and isoline properties
-          doseImageNode->SetBoolProperty(mitk::Constants::DOSE_SHOW_COLORWASH_PROPERTY_NAME.c_str(), true);
-          doseOutlineNode->SetBoolProperty(mitk::Constants::DOSE_SHOW_ISOLINES_PROPERTY_NAME.c_str(), true);
+          doseImageNode->SetBoolProperty(mitk::RTConstants::DOSE_SHOW_COLORWASH_PROPERTY_NAME.c_str(), true);
+          doseOutlineNode->SetBoolProperty(mitk::RTConstants::DOSE_SHOW_ISOLINES_PROPERTY_NAME.c_str(), true);
           //Set reference dose property
-          doseImageNode->SetFloatProperty(mitk::Constants::REFERENCE_DOSE_PROPERTY_NAME.c_str(), referenceDose);
-          doseOutlineNode->SetFloatProperty(mitk::Constants::REFERENCE_DOSE_PROPERTY_NAME.c_str(), referenceDose);
+          doseImageNode->SetFloatProperty(mitk::RTConstants::REFERENCE_DOSE_PROPERTY_NAME.c_str(), referenceDose);
+          doseOutlineNode->SetFloatProperty(mitk::RTConstants::REFERENCE_DOSE_PROPERTY_NAME.c_str(), referenceDose);
 
           berry::IPreferences::Pointer nameNode = prefService->GetSystemPreferences()->Node(mitk::RTUIConstants::ROOT_DOSE_VIS_PREFERENCE_NODE_ID);
           std::string presetName = nameNode->Get(mitk::RTUIConstants::SELECTED_ISO_PRESET_ID,"");
 
           mitk::IsoDoseLevelSet::Pointer isoDoseLevelPreset = presetMap[presetName];
           mitk::IsoDoseLevelSetProperty::Pointer levelSetProp = mitk::IsoDoseLevelSetProperty::New(isoDoseLevelPreset);
-          doseImageNode->SetProperty(mitk::Constants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str(),levelSetProp);
-          doseOutlineNode->SetProperty(mitk::Constants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str(),levelSetProp);
+          doseImageNode->SetProperty(mitk::RTConstants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str(),levelSetProp);
+          doseOutlineNode->SetProperty(mitk::RTConstants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str(),levelSetProp);
 
           mitk::IsoDoseLevelVector::Pointer levelVector = mitk::IsoDoseLevelVector::New();
           mitk::IsoDoseLevelVectorProperty::Pointer levelVecProp = mitk::IsoDoseLevelVectorProperty::New(levelVector);
-          doseImageNode->SetProperty(mitk::Constants::DOSE_FREE_ISO_VALUES_PROPERTY_NAME.c_str(),levelVecProp);
-          doseOutlineNode->SetProperty(mitk::Constants::DOSE_FREE_ISO_VALUES_PROPERTY_NAME.c_str(),levelVecProp);
+          doseImageNode->SetProperty(mitk::RTConstants::DOSE_FREE_ISO_VALUES_PROPERTY_NAME.c_str(),levelVecProp);
+          doseOutlineNode->SetProperty(mitk::RTConstants::DOSE_FREE_ISO_VALUES_PROPERTY_NAME.c_str(),levelVecProp);
 
           //Generating the Colorwash
           vtkSmartPointer<vtkColorTransferFunction> transferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
