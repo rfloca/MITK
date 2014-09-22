@@ -21,6 +21,7 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <mitkDataNodeFactory.h>
 #include <mitkImagePixelWriteAccessor.h>
 #include <mitkImageAccessByItk.h>
+#include <mitkRenderingModeProperty.h>
 #include <itkImageIterator.h>
 #include <itkImageRegionIterator.h>
 
@@ -84,6 +85,9 @@ namespace mitk
     originalNode->SetFloatProperty(mitk::RTConstants::PRESCRIBED_DOSE_PROPERTY_NAME.c_str(),prescripeDose);
     originalNode->SetFloatProperty(mitk::RTConstants::REFERENCE_DOSE_PROPERTY_NAME.c_str(), 40);
     originalNode->SetBoolProperty(mitk::RTConstants::DOSE_PROPERTY_NAME.c_str(),true);
+    mitk::RenderingModeProperty::Pointer renderingMode = mitk::RenderingModeProperty::New();
+    renderingMode->SetValue( mitk::RenderingModeProperty::LOOKUPTABLE_LEVELWINDOW_COLOR );
+    originalNode->SetProperty("Image Rendering.Mode", renderingMode);
     return originalNode;
   }
 

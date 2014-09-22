@@ -827,24 +827,30 @@ vtkSmartPointer<vtkPolyData> mitk::DoseImageVtkMapper2D::CreateOutlinePolyData(m
   mitk::IsoDoseLevelSetProperty::Pointer propIsoSet = dynamic_cast<mitk::IsoDoseLevelSetProperty* >(GetDataNode()->GetProperty(mitk::RTConstants::DOSE_ISO_LEVELS_PROPERTY_NAME.c_str()));
   mitk::IsoDoseLevelSet::Pointer isoDoseLevelSet = propIsoSet->GetValue();
 
-  for(mitk::IsoDoseLevelSet::ConstIterator doseIT = isoDoseLevelSet->Begin(); doseIT!=isoDoseLevelSet->End();++doseIT)
+  if (isoDoseLevelSet.IsNotNull())
   {
-    if(doseIT->GetVisibleIsoLine())
+    for(mitk::IsoDoseLevelSet::ConstIterator doseIT = isoDoseLevelSet->Begin(); doseIT!=isoDoseLevelSet->End();++doseIT)
     {
-      this->CreateLevelOutline(renderer, &(doseIT.Value()), pref, points, lines, colors);
-    }//end of if visible dose value
-  }//end of loop over all does values
+      if(doseIT->GetVisibleIsoLine())
+      {
+        this->CreateLevelOutline(renderer, &(doseIT.Value()), pref, points, lines, colors);
+      }//end of if visible dose value
+    }//end of loop over all does values
+  }
 
   mitk::IsoDoseLevelVectorProperty::Pointer propfreeIsoVec = dynamic_cast<mitk::IsoDoseLevelVectorProperty* >(GetDataNode()->GetProperty(mitk::RTConstants::DOSE_FREE_ISO_VALUES_PROPERTY_NAME.c_str()));
   mitk::IsoDoseLevelVector::Pointer frereIsoDoseLevelVec = propfreeIsoVec->GetValue();
 
-  for(mitk::IsoDoseLevelVector::ConstIterator freeDoseIT = frereIsoDoseLevelVec->Begin(); freeDoseIT!=frereIsoDoseLevelVec->End();++freeDoseIT)
+  if (frereIsoDoseLevelVec.IsNotNull())
   {
-    if(freeDoseIT->Value()->GetVisibleIsoLine())
+    for(mitk::IsoDoseLevelVector::ConstIterator freeDoseIT = frereIsoDoseLevelVec->Begin(); freeDoseIT!=frereIsoDoseLevelVec->End();++freeDoseIT)
     {
-      this->CreateLevelOutline(renderer, freeDoseIT->Value(), pref, points, lines, colors);
-    }//end of if visible dose value
-  }//end of loop over all does values
+      if(freeDoseIT->Value()->GetVisibleIsoLine())
+      {
+        this->CreateLevelOutline(renderer, freeDoseIT->Value(), pref, points, lines, colors);
+      }//end of if visible dose value
+    }//end of loop over all does values
+  }
 
   // Create a polydata to store everything in
   vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();

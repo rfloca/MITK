@@ -7,14 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>395</width>
-    <height>32</height>
+    <height>36</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
     <number>2</number>
    </property>
    <item>
@@ -84,7 +93,7 @@
      <property name="minimumSize">
       <size>
        <width>50</width>
-       <height>0</height>
+       <height>20</height>
       </size>
      </property>
      <property name="alignment">
@@ -119,7 +128,7 @@
      <property name="minimumSize">
       <size>
        <width>50</width>
-       <height>0</height>
+       <height>20</height>
       </size>
      </property>
      <property name="toolTip">

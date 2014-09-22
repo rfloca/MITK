@@ -85,10 +85,15 @@ void RTDoseVisualizer::CreateQtPartControl( QWidget *parent )
   m_DoseValueDelegate = new QmitkDoseValueDelegate(this);
   m_DoseVisualDelegate = new QmitkDoseVisualStyleDelegate(this);
 
+  MITK_INFO<<"UpdateByPref...";
   this->UpdateByPreferences();
+  MITK_INFO<<"ActualizeIsoLevelsForAllDoseDataNodes...";
   this->ActualizeIsoLevelsForAllDoseDataNodes();
+  MITK_INFO<<"ActualizeReferenceDoseForAllDoseDataNodes...";
   this->ActualizeReferenceDoseForAllDoseDataNodes();
+  MITK_INFO<<"ActualizeDisplayStyleForAllDoseDataNodes...";
   this->ActualizeDisplayStyleForAllDoseDataNodes();
+  MITK_INFO<<"Finished";
 
   this->m_Controls.isoLevelSetView->setModel(m_LevelSetModel);
   this->m_Controls.isoLevelSetView->setItemDelegateForColumn(0,m_DoseColorDelegate);
@@ -126,7 +131,9 @@ void RTDoseVisualizer::CreateQtPartControl( QWidget *parent )
     eventAdmin->subscribeSlot(this, SLOT(OnHandleCTKEventReferenceDoseChanged(ctkEvent)), propsForSlot);
   }
 
+  MITK_INFO<<"Update->...";
   this->UpdateBySelectedNode();
+  MITK_INFO<<"Update->Fin!";
 }
 
 void RTDoseVisualizer::OnReferenceDoseChanged(double value)
@@ -230,6 +237,8 @@ void RTDoseVisualizer::OnDataChangedInIsoLevelSetView()
 
   //Hack: This is a dirty hack to reinit the isodose contour node. Only if the node (or property) has changed the rendering process register the RequestUpdateAll
   //Only way to render the isoline by changes without a global reinit
+  if (m_selectedNode.IsNull())
+    return;
   mitk::DataNode::Pointer isoDoseNode = this->GetIsoDoseNode(m_selectedNode);
   isoDoseNode->Modified();
 
@@ -365,6 +374,8 @@ void RTDoseVisualizer::OnGlobalVisIsoLineToggled(bool showIsoLines)
 
 void RTDoseVisualizer::UpdateColorWashTransferFunction()
 {
+  if (m_selectedNode.IsNull())
+    return;
   //Generating the Colorwash
   vtkSmartPointer<vtkColorTransferFunction> transferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
 

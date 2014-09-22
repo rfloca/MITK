@@ -195,6 +195,10 @@ void DicomEventHandler::OnSignalAddSeriesToDataManager(const ctkEvent& ctkEvent)
           //set the outline properties
           doseOutlineNode->SetProperty( "helper object", mitk::BoolProperty::New(true) );
           doseOutlineNode->SetProperty( "includeInBoundingBox", mitk::BoolProperty::New(false) );
+          mitk::RenderingModeProperty::Pointer renderingMode = mitk::RenderingModeProperty::New();
+          renderingMode->SetValue( mitk::RenderingModeProperty::LOOKUPTABLE_LEVELWINDOW_COLOR );
+          doseOutlineNode->SetProperty("Image Rendering.Mode", renderingMode);
+          doseOutlineNode->SetProperty("outline width", mitk::FloatProperty::New(1.5f));
 
           ctkServiceReference serviceReference =mitk::PluginActivator::getContext()->getServiceReference<mitk::IDataStorageService>();
           mitk::IDataStorageService* storageService = mitk::PluginActivator::getContext()->getService<mitk::IDataStorageService>(serviceReference);
