@@ -44,6 +44,7 @@ set(H_FILES
   Common/mitkExceptionMacro.h
   Common/mitkGetClassHierarchy.h
 
+  DataManagement/mitkArbitraryTimeGeometry.h
   DataManagement/mitkProportionalTimeGeometry.h
   DataManagement/mitkTimeGeometry.h
   DataManagement/mitkImageAccessByItk.h
@@ -132,6 +133,7 @@ set(CPP_FILES
   Controllers/mitkVerboseLimitedLinearUndo.cpp
   Controllers/mitkVtkInteractorCameraController.cpp
   Controllers/mitkVtkLayerController.cpp
+  DataManagement/mitkArbitraryTimeGeometry.cpp
   DataManagement/mitkProportionalTimeGeometry.cpp
   DataManagement/mitkTimeGeometry.cpp
   DataManagement/mitkAbstractTransformGeometry.cpp

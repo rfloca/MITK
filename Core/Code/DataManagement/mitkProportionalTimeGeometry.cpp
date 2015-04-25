@@ -151,7 +151,7 @@ mitk::BaseGeometry::Pointer mitk::ProportionalTimeGeometry::GetGeometryForTimePo
 
 mitk::BaseGeometry::Pointer mitk::ProportionalTimeGeometry::GetGeometryCloneForTimeStep( TimeStepType timeStep) const
 {
-  if (timeStep > m_GeometryVector.size())
+  if (timeStep >= m_GeometryVector.size())
     return 0;
   return m_GeometryVector[timeStep]->Clone();
 }
@@ -222,6 +222,15 @@ itk::LightObject::Pointer mitk::ProportionalTimeGeometry::InternalClone() const
 }
 
 void mitk::ProportionalTimeGeometry::Initialize (BaseGeometry* geometry, TimeStepType timeSteps)
+{
+  for (TimeStepType currentStep = 0; currentStep < this->CountTimeSteps(); ++currentStep)
+  {
+    Geometry3D::Pointer clonedGeometry = geometry->Clone();
+    this->SetTimeStepGeometry(clonedGeometry.GetPointer(), currentStep);
+  }
+}
+
+void mitk::ProportionalTimeGeometry::Initialize (const Geometry3D* geometry, TimeStepType timeSteps)
 {
   timeSteps = (timeSteps > 0) ? timeSteps : 1;
   m_FirstTimePoint = 0.0;
