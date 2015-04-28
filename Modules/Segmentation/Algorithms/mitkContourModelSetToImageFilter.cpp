@@ -140,7 +140,7 @@ void mitk::ContourModelSetToImageFilter::GenerateData()
     return;
   }
 
-  mitk::Geometry3D* outputImageGeo = outputImage->GetGeometry(m_TimeStep);
+  mitk::BaseGeometry* outputImageGeo = outputImage->GetGeometry(m_TimeStep);
 
   // Create mitkVtkImageOverwrite which is needed to write the slice back into the volume
   vtkSmartPointer<mitkVtkImageOverwrite> reslice = vtkSmartPointer<mitkVtkImageOverwrite>::New();
