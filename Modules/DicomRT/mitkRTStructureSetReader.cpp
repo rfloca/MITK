@@ -240,6 +240,7 @@ namespace mitk
               ( mitk::BaseRenderer::GetRenderWindowByName("stdmulti.widget3")));
       node->SetVisibility(true, mitk::BaseRenderer::GetInstance
               ( mitk::BaseRenderer::GetRenderWindowByName("stdmulti.widget4")));
+
       nodes.push_back(node);
     }
 

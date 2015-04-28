@@ -1,7 +1,7 @@
 # CREATE MODULE HERE
 IF (NOT DEFINED DCMTK_dcmrt_LIBRARY OR DCMTK_dcmrt_LIBRARY)
 MITK_CREATE_MODULE(
-  INCLUDE_DIRS DataStructures
+  INCLUDE_DIRS DataStructures Rendering
   DEPENDS MitkSegmentation MitkSceneSerializationBase
   PACKAGE_DEPENDS DCMTK
 )

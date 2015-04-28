@@ -54,6 +54,7 @@ set(module_dirs
     DicomRT
     IOExt
     XNAT
+    RTUI
 )
 
 if(MITK_ENABLE_PIC_READER)
