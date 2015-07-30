@@ -149,6 +149,7 @@ public:
 
     readerOutput = mitk::IOUtil::Load(GetTestDataFilePath("RT/StructureSet/Rectum.cnt_set"));
     cnt_set = dynamic_cast<mitk::ContourModelSet*>(readerOutput.at(0).GetPointer());
+
     cnt_set->SetProperty("name", mitk::StringProperty::New("Rectum"));
     r.push_back(cnt_set);
   }

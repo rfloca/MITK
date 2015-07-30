@@ -110,6 +110,7 @@ set(MODULE_TESTS
   mitkEqualTest.cpp
   mitkLineTest.cpp
   mitkItkImageIOTest.cpp
+  mitkArbitraryTimeGeometryTest
   mitkRotatedSlice4DTest.cpp
 )
 
