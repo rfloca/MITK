@@ -21,7 +21,6 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include <berryISelectionListener.h>
 
 #include <QmitkAbstractView.h>
-#include <mitkDataNodeFactory.h>
 
 #include "ui_RTDoseVisualizerControls.h"
 
@@ -71,45 +70,45 @@ public:
   virtual ~RTDoseVisualizer();
   static const std::string VIEW_ID;
 
-  void OnSliceChanged(itk::Object *sender, const itk::EventObject &e);
+  void OnSliceChanged(itk::Object* sender, const itk::EventObject& e);
 
-  protected slots:
+protected slots:
 
-    void OnAddFreeValueClicked();
+  void OnAddFreeValueClicked();
 
-    void OnRemoveFreeValueClicked();
+  void OnRemoveFreeValueClicked();
 
-    void OnUsePrescribedDoseClicked();
+  void OnUsePrescribedDoseClicked();
 
-    void OnDataChangedInIsoLevelSetView();
+  void OnDataChangedInIsoLevelSetView();
 
-    void OnAbsDoseToggled(bool);
+  void OnAbsDoseToggled(bool);
 
-    void OnGlobalVisColorWashToggled(bool);
+  void OnGlobalVisColorWashToggled(bool);
 
-    void OnGlobalVisIsoLineToggled(bool);
+  void OnGlobalVisIsoLineToggled(bool);
 
-    void OnShowContextMenuIsoSet(const QPoint&);
+  void OnShowContextMenuIsoSet(const QPoint&);
 
-    void OnCurrentPresetChanged(const QString&);
+  void OnCurrentPresetChanged(const QString&);
 
-    void OnReferenceDoseChanged(double);
+  void OnReferenceDoseChanged(double);
 
-    void OnHandleCTKEventReferenceDoseChanged(const ctkEvent& event);
+  void OnHandleCTKEventReferenceDoseChanged(const ctkEvent& event);
 
-    void OnHandleCTKEventPresetsChanged(const ctkEvent& event);
+  void OnHandleCTKEventPresetsChanged(const ctkEvent& event);
 
-    void ActualizeFreeIsoLine();
+  void ActualizeFreeIsoLine();
 
 protected:
 
-  virtual void CreateQtPartControl(QWidget *parent);
+  virtual void CreateQtPartControl(QWidget* parent);
 
   virtual void SetFocus();
 
   /// \brief called by QmitkFunctionality when DataManager's selection has changed
-  virtual void OnSelectionChanged( berry::IWorkbenchPart::Pointer source,
-    const QList<mitk::DataNode::Pointer>& nodes );
+  virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer source,
+                                  const QList<mitk::DataNode::Pointer>& nodes);
 
   /** Update the transfer funtion property for the color wash*/
   void UpdateColorWashTransferFunction();

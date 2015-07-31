@@ -23,7 +23,8 @@ See LICENSE.txt or http://www.mitk.org for details.
 #include "RTUIPreferencePage.h"
 #include "DoseVisualizationPreferencePage.h"
 
-namespace mitk {
+namespace mitk
+{
 
   ctkPluginContext* org_mitk_gui_qt_dosevisualization_Activator::m_Context = NULL;
 
@@ -33,7 +34,7 @@ namespace mitk {
     BERRY_REGISTER_EXTENSION_CLASS(RTUIPreferencePage, context)
     BERRY_REGISTER_EXTENSION_CLASS(DoseVisualizationPreferencePage, context)
 
-      m_Context = context;
+    m_Context = context;
   }
 
   void org_mitk_gui_qt_dosevisualization_Activator::stop(ctkPluginContext* context)
@@ -50,4 +51,7 @@ namespace mitk {
 
 }
 
-Q_EXPORT_PLUGIN2(org_mitk_gui_qt_dosevisualization, mitk::org_mitk_gui_qt_dosevisualization_Activator)
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+Q_EXPORT_PLUGIN2(org_mitk_gui_qt_dosevisualization,
+                 mitk::org_mitk_gui_qt_dosevisualization_Activator)
+#endif

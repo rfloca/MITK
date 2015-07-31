@@ -50,22 +50,21 @@ DoseVisualizationPreferencePage::~DoseVisualizationPreferencePage()
   delete m_Controls;
 }
 
-void DoseVisualizationPreferencePage::Init(berry::IWorkbench::Pointer )
+void DoseVisualizationPreferencePage::Init(berry::IWorkbench::Pointer)
 {
 
 }
 
 void DoseVisualizationPreferencePage::CreateQtControl(QWidget* parent)
 {
-  berry::IPreferencesService::Pointer prefService
-    = berry::Platform::GetServiceRegistry()
-    .GetServiceById<berry::IPreferencesService>(berry::IPreferencesService::ID);
+  berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
 
-  m_DoseVisNode = prefService->GetSystemPreferences()->Node(mitk::RTUIConstants::ROOT_DOSE_VIS_PREFERENCE_NODE_ID);
+  m_DoseVisNode = prefService->GetSystemPreferences()->Node(QString::fromStdString(
+                    mitk::RTUIConstants::ROOT_DOSE_VIS_PREFERENCE_NODE_ID));
 
   m_MainControl = new QWidget(parent);
   m_Controls = new Ui::DoseVisualizationPreferencePageControls;
-  m_Controls->setupUi( m_MainControl );
+  m_Controls->setupUi(m_MainControl);
 
   m_LevelSetModel = new QmitkIsoDoseLevelSetModel(this);
   m_DoseColorDelegate = new QmitkDoseColorDelegate(this);
@@ -73,18 +72,24 @@ void DoseVisualizationPreferencePage::CreateQtControl(QWidget* parent)
   m_DoseVisualDelegate = new QmitkDoseVisualStyleDelegate(this);
 
   this->m_Controls->isoLevelSetView->setModel(m_LevelSetModel);
-  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(0,m_DoseColorDelegate);
-  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(1,m_DoseValueDelegate);
-  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(2,m_DoseVisualDelegate);
-  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(3,m_DoseVisualDelegate);
+  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(0, m_DoseColorDelegate);
+  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(1, m_DoseValueDelegate);
+  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(2, m_DoseVisualDelegate);
+  this->m_Controls->isoLevelSetView->setItemDelegateForColumn(3, m_DoseVisualDelegate);
   this->m_Controls->isoLevelSetView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  connect(m_Controls->spinReferenceDose, SIGNAL(valueChanged(double)), m_LevelSetModel, SLOT(setReferenceDose(double)));
-  connect(m_Controls->spinReferenceDose, SIGNAL(valueChanged(double)), this, SLOT(OnReferenceDoseChanged(double)));
-  connect(m_Controls->checkGlobalSync, SIGNAL(toggled(bool)), m_Controls->spinReferenceDose, SLOT(setEnabled(bool)));
-  connect(m_Controls->radioAbsDose, SIGNAL(toggled(bool)), m_LevelSetModel, SLOT(setShowAbsoluteDose(bool)));
-  connect(m_Controls->isoLevelSetView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(OnShowContextMenuIsoSet(const QPoint&)));
-  connect(m_Controls->listPresets, SIGNAL(currentItemChanged ( QListWidgetItem *, QListWidgetItem *)), this, SLOT(OnCurrentItemChanged ( QListWidgetItem *, QListWidgetItem *)));
+  connect(m_Controls->spinReferenceDose, SIGNAL(valueChanged(double)), m_LevelSetModel,
+          SLOT(setReferenceDose(double)));
+  connect(m_Controls->spinReferenceDose, SIGNAL(valueChanged(double)), this,
+          SLOT(OnReferenceDoseChanged(double)));
+  connect(m_Controls->checkGlobalSync, SIGNAL(toggled(bool)), m_Controls->spinReferenceDose,
+          SLOT(setEnabled(bool)));
+  connect(m_Controls->radioAbsDose, SIGNAL(toggled(bool)), m_LevelSetModel,
+          SLOT(setShowAbsoluteDose(bool)));
+  connect(m_Controls->isoLevelSetView, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+          SLOT(OnShowContextMenuIsoSet(const QPoint&)));
+  connect(m_Controls->listPresets, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+          this, SLOT(OnCurrentItemChanged(QListWidgetItem*, QListWidgetItem*)));
   connect(m_Controls->btnAddPreset, SIGNAL(clicked(bool)), this, SLOT(OnAddPresetClicked(bool)));
   connect(m_Controls->btnDelPreset, SIGNAL(clicked(bool)), this, SLOT(OnDelPresetClicked(bool)));
   connect(m_Controls->btnResetPreset, SIGNAL(clicked(bool)), this, SLOT(OnResetPresetClicked(bool)));
@@ -101,16 +106,22 @@ QWidget* DoseVisualizationPreferencePage::GetQtControl() const
 
 bool DoseVisualizationPreferencePage::PerformOk()
 {
-  m_DoseVisNode->PutBool(mitk::RTUIConstants::DOSE_DISPLAY_ABSOLUTE_ID,m_Controls->radioAbsDose->isChecked());
-  m_DoseVisNode->PutBool(mitk::RTUIConstants::GLOBAL_VISIBILITY_COLORWASH_ID,m_Controls->checkGlobalVisColorWash->isChecked());
-  m_DoseVisNode->PutBool(mitk::RTUIConstants::GLOBAL_VISIBILITY_ISOLINES_ID,m_Controls->checkGlobalVisIsoLine->isChecked());
-  m_DoseVisNode->PutDouble(mitk::RTUIConstants::REFERENCE_DOSE_ID,m_Controls->spinReferenceDose->value());
-  m_DoseVisNode->PutBool(mitk::RTUIConstants::GLOBAL_REFERENCE_DOSE_SYNC_ID, m_Controls->checkGlobalSync->isChecked());
+  m_DoseVisNode->PutBool(QString::fromStdString(mitk::RTUIConstants::DOSE_DISPLAY_ABSOLUTE_ID),
+                         m_Controls->radioAbsDose->isChecked());
+  m_DoseVisNode->PutBool(QString::fromStdString(mitk::RTUIConstants::GLOBAL_VISIBILITY_COLORWASH_ID),
+                         m_Controls->checkGlobalVisColorWash->isChecked());
+  m_DoseVisNode->PutBool(QString::fromStdString(mitk::RTUIConstants::GLOBAL_VISIBILITY_ISOLINES_ID),
+                         m_Controls->checkGlobalVisIsoLine->isChecked());
+  m_DoseVisNode->PutDouble(QString::fromStdString(mitk::RTUIConstants::REFERENCE_DOSE_ID),
+                           m_Controls->spinReferenceDose->value());
+  m_DoseVisNode->PutBool(QString::fromStdString(mitk::RTUIConstants::GLOBAL_REFERENCE_DOSE_SYNC_ID),
+                         m_Controls->checkGlobalSync->isChecked());
 
   mitk::StorePresetsMap(this->m_Presets);
 
-  if (this->m_Presets.find(this->m_selectedPresetName)==this->m_Presets.end())
-  { //the preset currently selected in the application is not available any more. Change it to a valid one.
+  if (this->m_Presets.find(this->m_selectedPresetName) == this->m_Presets.end())
+  {
+    //the preset currently selected in the application is not available any more. Change it to a valid one.
     mitk::SetSelectedPresetName(this->m_Presets.begin()->first);
   }
 
@@ -121,7 +132,9 @@ bool DoseVisualizationPreferencePage::PerformOk()
 
   if (m_referenceDoseChanged)
   {
-    mitk::SignalReferenceDoseChange(m_Controls->checkGlobalSync->isChecked(), m_Controls->spinReferenceDose->value(), mitk::org_mitk_gui_qt_dosevisualization_Activator::GetContext());
+    mitk::SignalReferenceDoseChange(m_Controls->checkGlobalSync->isChecked(),
+                                    m_Controls->spinReferenceDose->value(),
+                                    mitk::org_mitk_gui_qt_dosevisualization_Activator::GetContext());
   }
 
   if (m_presetMapChanged)
@@ -138,18 +151,25 @@ void DoseVisualizationPreferencePage::PerformCancel()
 
 void DoseVisualizationPreferencePage::Update()
 {
-  m_Controls->checkGlobalVisColorWash->setChecked(m_DoseVisNode->GetBool(mitk::RTUIConstants::GLOBAL_VISIBILITY_COLORWASH_ID, true));
-  m_Controls->checkGlobalVisIsoLine->setChecked(m_DoseVisNode->GetBool(mitk::RTUIConstants::GLOBAL_VISIBILITY_ISOLINES_ID, true));
-  m_Controls->radioAbsDose->setChecked(m_DoseVisNode->GetBool(mitk::RTUIConstants::DOSE_DISPLAY_ABSOLUTE_ID, true));
-  m_Controls->radioRelDose->setChecked(!(m_DoseVisNode->GetBool(mitk::RTUIConstants::DOSE_DISPLAY_ABSOLUTE_ID, false)));
-  m_Controls->spinReferenceDose->setValue(m_DoseVisNode->GetDouble(mitk::RTUIConstants::REFERENCE_DOSE_ID, mitk::RTUIConstants::DEFAULT_REFERENCE_DOSE_VALUE));
-  m_Controls->checkGlobalSync->setChecked(m_DoseVisNode->GetBool(mitk::RTUIConstants::GLOBAL_REFERENCE_DOSE_SYNC_ID, true));
+  m_Controls->checkGlobalVisColorWash->setChecked(m_DoseVisNode->GetBool(QString::fromStdString(
+        mitk::RTUIConstants::GLOBAL_VISIBILITY_COLORWASH_ID), true));
+  m_Controls->checkGlobalVisIsoLine->setChecked(m_DoseVisNode->GetBool(QString::fromStdString(
+        mitk::RTUIConstants::GLOBAL_VISIBILITY_ISOLINES_ID), true));
+  m_Controls->radioAbsDose->setChecked(m_DoseVisNode->GetBool(QString::fromStdString(
+                                         mitk::RTUIConstants::DOSE_DISPLAY_ABSOLUTE_ID), true));
+  m_Controls->radioRelDose->setChecked(!(m_DoseVisNode->GetBool(QString::fromStdString(
+      mitk::RTUIConstants::DOSE_DISPLAY_ABSOLUTE_ID), false)));
+  m_Controls->spinReferenceDose->setValue(m_DoseVisNode->GetDouble(QString::fromStdString(
+      mitk::RTUIConstants::REFERENCE_DOSE_ID), mitk::RTUIConstants::DEFAULT_REFERENCE_DOSE_VALUE));
+  m_Controls->checkGlobalSync->setChecked(m_DoseVisNode->GetBool(QString::fromStdString(
+      mitk::RTUIConstants::GLOBAL_REFERENCE_DOSE_SYNC_ID), true));
 
   m_referenceDoseChanged = false;
   m_presetMapChanged = false;
 
 
-  berry::IPreferences::Pointer presetsNode = m_DoseVisNode->Node(mitk::RTUIConstants::ROOT_ISO_PRESETS_PREFERENCE_NODE_ID);
+  berry::IPreferences::Pointer presetsNode = m_DoseVisNode->Node(QString::fromStdString(
+        mitk::RTUIConstants::ROOT_ISO_PRESETS_PREFERENCE_NODE_ID));
   this->m_Presets = mitk::LoadPresetsMap();
   this->m_selectedPresetName = mitk::GetSelectedPresetName();
   UpdatePresetsWidgets();
@@ -172,10 +192,11 @@ mitk::IsoDoseLevelSet* DoseVisualizationPreferencePage::GetSelectedIsoLevelSet()
 
 void DoseVisualizationPreferencePage::UpdateLevelSetWidgets()
 {
-  this->m_Controls->btnAddLevel->setEnabled(this->GetSelectedIsoLevelSet()!=NULL);
+  this->m_Controls->btnAddLevel->setEnabled(this->GetSelectedIsoLevelSet() != NULL);
 
   QModelIndex selectedIndex = m_Controls->isoLevelSetView->currentIndex();
-  this->m_Controls->btnDelLevel->setEnabled(this->GetSelectedIsoLevelSet()!=NULL && selectedIndex.isValid());
+  this->m_Controls->btnDelLevel->setEnabled(this->GetSelectedIsoLevelSet() != NULL
+      && selectedIndex.isValid());
 }
 
 void DoseVisualizationPreferencePage::UpdatePresetsWidgets()
@@ -183,9 +204,11 @@ void DoseVisualizationPreferencePage::UpdatePresetsWidgets()
   m_Controls->listPresets->clear();
 
   QListWidgetItem* selectedItem = NULL;
+
   for (PresetMapType::iterator pos = m_Presets.begin(); pos != m_Presets.end(); ++pos)
   {
     QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(pos->first));
+
     if (!selectedItem)
     {
       selectedItem = item;
@@ -206,10 +229,12 @@ void DoseVisualizationPreferencePage::UpdatePresetsWidgets()
 
   this->m_LevelSetModel->setIsoDoseLevelSet(this->GetSelectedIsoLevelSet());
 
-  m_Controls->btnDelPreset->setEnabled((m_Controls->listPresets->currentItem() != NULL) && (m_Controls->listPresets->count()>1));
+  m_Controls->btnDelPreset->setEnabled((m_Controls->listPresets->currentItem() != NULL)
+                                       && (m_Controls->listPresets->count() > 1));
 }
 
-void DoseVisualizationPreferencePage::OnCurrentItemChanged ( QListWidgetItem * currentItem, QListWidgetItem * previousItem)
+void DoseVisualizationPreferencePage::OnCurrentItemChanged(QListWidgetItem* currentItem,
+    QListWidgetItem* previousItem)
 {
   this->m_LevelSetModel->setIsoDoseLevelSet(this->GetSelectedIsoLevelSet());
 }
@@ -236,6 +261,7 @@ void DoseVisualizationPreferencePage::OnShowContextMenuIsoSet(const QPoint& pos)
   QAction* swapAct = viewMenu.addAction("Swap iso line/color wash visibility");
 
   QAction* selectedItem = viewMenu.exec(globalPos);
+
   if (selectedItem == invertIsoLineAct)
   {
     this->m_LevelSetModel->invertVisibilityIsoLines();
@@ -278,10 +304,12 @@ void DoseVisualizationPreferencePage::OnAddPresetClicked(bool checked)
 {
   bool done = false;
   QString name = tr("new_preset");
+
   while (!done)
   {
     bool ok;
-    name = QInputDialog::getText(m_MainControl, tr("Define name of new preset."), tr("Preset name:"), QLineEdit::Normal, name, &ok);
+    name = QInputDialog::getText(m_MainControl, tr("Define name of new preset."), tr("Preset name:"),
+                                 QLineEdit::Normal, name, &ok);
 
     if (!ok)
     {
@@ -289,6 +317,7 @@ void DoseVisualizationPreferencePage::OnAddPresetClicked(bool checked)
     }
 
     bool uniqueName = m_Presets.find(name.toStdString()) == m_Presets.end();
+
     if (!uniqueName)
     {
       QMessageBox box;
@@ -296,7 +325,8 @@ void DoseVisualizationPreferencePage::OnAddPresetClicked(bool checked)
       box.exec();
     }
 
-    bool validName = name.indexOf(tr("/")) ==-1;
+    bool validName = name.indexOf(tr("/")) == -1;
+
     if (!validName)
     {
       QMessageBox box;
@@ -308,7 +338,7 @@ void DoseVisualizationPreferencePage::OnAddPresetClicked(bool checked)
   }
 
   mitk::IsoDoseLevelSet::Pointer newSet = mitk::GeneratIsoLevels_Virtuos();
-  m_Presets.insert(std::make_pair(name.toStdString(),newSet));
+  m_Presets.insert(std::make_pair(name.toStdString(), newSet));
 
   m_presetMapChanged = true;
 
@@ -345,7 +375,7 @@ void DoseVisualizationPreferencePage::OnResetPresetClicked(bool checked)
   {
     mitk::IsoDoseLevelSet::Pointer newSet = mitk::GeneratIsoLevels_Virtuos();
     m_Presets.clear();
-    m_Presets.insert(std::make_pair("Virtuos",newSet));
+    m_Presets.insert(std::make_pair("Virtuos", newSet));
 
     m_presetMapChanged = true;
 
@@ -365,7 +395,7 @@ void DoseVisualizationPreferencePage::OnDelLevelClicked(bool checked)
 
   if (!selectedIndex.isValid())
   {
-    selectedIndex = m_Controls->isoLevelSetView->indexAt(QPoint(1,1));
+    selectedIndex = m_Controls->isoLevelSetView->indexAt(QPoint(1, 1));
   }
 
   this->m_LevelSetModel->deleteLevel(selectedIndex);
