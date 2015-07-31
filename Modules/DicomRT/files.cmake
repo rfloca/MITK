@@ -9,6 +9,5 @@ SET(CPP_FILES
   mitkIsoDoseLevelSetProperty.cpp
   mitkIsoDoseLevelVectorProperty.cpp
   Rendering/mitkDoseImageVtkMapper2D.cpp
-  Rendering/mitkDoseImageVtkMapper2D.h
 )
 
